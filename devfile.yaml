@@ -1,0 +1,16 @@
+schemaVersion: 2.0.0
+metadata:
+  name: python-lambda-project
+components:
+  - name: dev
+    container:
+      image: public.ecr.aws/aws-mde/universal-image:latest
+commands:
+  - id: install
+    exec:
+      component: dev
+      commandLine: "pip install -r ingestion_function/requirements.txt && pip install -r query_function/requirements.txt && pip install pytest"
+  - id: test
+    exec:
+      component: dev
+      commandLine: "python -m pytest"

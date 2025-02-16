@@ -1,0 +1,88 @@
+AWSTemplateFormatVersion: '2010-09-01'
+Transform: AWS::Serverless-2016-10-31
+
+Globals:
+  Function:
+    Timeout: 30
+    MemorySize: 1024
+    Runtime: python3.9
+
+Resources:
+  # S3 Bucket for document storage
+  DocumentsBucket:
+    Type: AWS::S3::Bucket
+
+  # OpenSearch Domain
+  OpenSearchDomain:
+    Type: AWS::OpenSearch::Domain
+    Properties:
+      EngineVersion: OpenSearch_2.5
+      ClusterConfig:
+        InstanceType: t3.small.search
+        InstanceCount: 1
+      EBSOptions:
+        EBSEnabled: true
+        VolumeSize: 10
+      EncryptionAtRestOptions:
+        Enabled: true
+
+  # Secrets for Cohere API key
+  CohereApiSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Description: Cohere API Key
+      SecretString: '{"COHERE_API_KEY": "your-api-key-here"}'
+
+  # Ingestion Function
+  IngestionFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ingestion_function/
+      Handler: app.lambda_handler
+      Policies:
+        - S3ReadPolicy:
+            BucketName: !Ref DocumentsBucket
+        - OpenSearchServicePolicy:
+            DomainName: !Ref OpenSearchDomain
+        - SecretsManagerReadWrite:
+            SecretArn: !Ref CohereApiSecret
+      Environment:
+        Variables:
+          OPENSEARCH_DOMAIN: !GetAtt OpenSearchDomain.DomainEndpoint
+          COHERE_SECRET_ARN: !Ref CohereApiSecret
+      Events:
+        S3Upload:
+          Type: S3
+          Properties:
+            Bucket: !Ref DocumentsBucket
+            Events: s3:ObjectCreated:*
+
+  # Query Function with API Gateway
+  QueryFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: query_function/
+      Handler: app.lambda_handler
+      Policies:
+        - OpenSearchServicePolicy:
+            DomainName: !Ref OpenSearchDomain
+        - SecretsManagerReadWrite:
+            SecretArn: !Ref CohereApiSecret
+      Environment:
+        Variables:
+          OPENSEARCH_DOMAIN: !GetAtt OpenSearchDomain.DomainEndpoint
+          COHERE_SECRET_ARN: !Ref CohereApiSecret
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /query
+            Method: post
+
+Outputs:
+  ApiUrl:
+    Description: API Gateway endpoint URL
+    Value: !Sub https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/query
+  BucketName:
+    Description: S3 Bucket for document uploads
+    Value: !Ref DocumentsBucket
