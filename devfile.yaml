@@ -9,8 +9,9 @@ commands:
   - id: install
     exec:
       component: dev
-      commandLine: "pip install -r ingestion_function/requirements.txt && pip install -r query_function/requirements.txt && pip install pytest"
+      commandLine: pip install -r ingestion_function/requirements.txt && pip install
+        -r query_function/requirements.txt && pip install pytest
   - id: test
     exec:
       component: dev
-      commandLine: "python -m pytest"
+      commandLine: python -m pytest
