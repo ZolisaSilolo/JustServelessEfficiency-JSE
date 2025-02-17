@@ -1,6 +1,6 @@
 # Serverless Document Q&A System
 
-This project implements a serverless document Q&A system using AWS services and the Cohere API. The system consists of two main components:
+This project implements a serverless document Q&A system powered by genAI, using AWS services and the Cohere API. The system consists of two main components:
 
 1. Document Ingestion (Lambda Function):
    - Triggers on S3 uploads
