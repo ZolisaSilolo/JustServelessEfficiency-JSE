@@ -42,7 +42,7 @@ if st.button("Submit Query"):
             )
             
             if response.status_code == 200:
-                # Display results
+                # Displaying the results
                 st.subheader("Results")
                 results = response.json()
                 st.json(results)
@@ -53,6 +53,6 @@ if st.button("Submit Query"):
     else:
         st.warning("Please enter a query first.")
 
-# Add footer
+# Adding the footer here
 st.markdown("---")
 st.markdown("Made with ❤️ using Streamlit")
