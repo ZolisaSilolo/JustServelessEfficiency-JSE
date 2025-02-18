@@ -27,7 +27,6 @@ A serverless solution for document question-answering powered by **AWS Serverles
   2. Semantic search in OpenSearch.
   3. Generate answers using Cohere's generative model.
 
-![Architecture Diagram](https://via.placeholder.com/600x300?text=Architecture+Diagram+Here) *Add your diagram later*
 
 ---
 
