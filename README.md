@@ -35,7 +35,7 @@ A serverless solution for document question-answering powered by **AWS Serverles
 - AWS Account with IAM permissions for:
   - Lambda, S3, API Gateway, OpenSearch, CloudFormation
 - [AWS SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/install-sam-cli.html)
-- Python 3.9
+- Python 3.9+
 - [Cohere API Key](https://dashboard.cohere.com/api-keys)
 
 ---
